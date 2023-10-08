@@ -7,10 +7,12 @@ In the city of Bukittinggi, all attendance data will be stored in a database, us
 ### HOW TO INSTALL ZEUS CLI
 - https://docs.zepp.com/docs/guides/tools/cli/
 
-
-### HOW TO CONFIG
+### HOW TO SET CONFIG
 - Run `npm install`
 - Rename file `config.js.example` become `config.js` and fill the variables
+
+### HOW TO RUN
+- Run `zeus preview`
 
 ### REFERENCE
 - https://docs.zepp.com/docs/guides/tools/cli/

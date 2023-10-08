@@ -1,4 +1,4 @@
-import { ACCESS_TOKEN, PASSWORD, URL_LOGIN, URL_SERVER, USERNAME } from '../config'
+import { ACCESS_TOKEN, PASSWORD, URL_SERVER, USERNAME } from '../config'
 import { MessageBuilder } from '../shared/message-side'
 
 const messageBuilder = new MessageBuilder()
@@ -60,7 +60,7 @@ const fetchData = async (ctx) => {
 const apiLogin = async (ctx) => {
   try {
     const data = await fetch({
-      url: URL_LOGIN,
+      url: URL_SERVER + '/api/login',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

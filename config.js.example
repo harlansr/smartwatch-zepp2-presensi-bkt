@@ -1,5 +1,4 @@
 module.exports = {
-    URL_LOGIN: "<SECRET>",
     URL_SERVER: "<SECRET>",
     USERNAME: "<SECRET>",
     PASSWORD: "<SECRET>",
