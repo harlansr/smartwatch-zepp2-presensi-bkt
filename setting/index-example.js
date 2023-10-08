@@ -38,85 +38,85 @@ AppSettingsPage({
         this.setState(props)
         const contentItems = []
         const addBTN = View(
-        {
-            style: {
-            fontSize: '12px',
-            lineHeight: '30px',
-            borderRadius: '30px',
-            background: '#409EFF',
-            color: 'white',
-            textAlign: 'center',
-            padding: '0 15px',
-            width: '30%',
-            },
-        },
-        [
-            TextInput({
-            label: gettext('addTodo'),
-            onChange: (val) => {
-                this.addTodoList(val)
-            },
-            }),
-        ],
-        )
-        this.state.todoList.forEach((item, index) => {
-        contentItems.push(
-            View(
             {
                 style: {
-                borderBottom: '1px solid #eaeaea',
-                padding: '6px 0',
-                marginBottom: '6px',
-                display: 'flex',
-                flexDirection: 'row',
+                fontSize: '12px',
+                lineHeight: '30px',
+                borderRadius: '30px',
+                background: '#409EFF',
+                color: 'white',
+                textAlign: 'center',
+                padding: '0 15px',
+                width: '30%',
                 },
             },
             [
-                View(
-                {
-                    style: {
-                    flex: 1,
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justfyContent: 'center',
-                    alignItems: 'center',
-                    },
-                },
-                [
-                    TextInput({
-                    label: '',
-                    bold: true,
-                    value: item,
-                    subStyle: {
-                        color: '#333',
-                        fontSize: '14px',
-                    },
-                    maxLength: 200,
-                    onChange: (val) => {
-                        if (val.length > 0 && val.length <= 200) {
-                        this.editTodoList(val, index)
-                        } else {
-                        console.log("todoList can't be empty or too long!")
-                        }
-                    },
-                    }),
-                ],
-                ),
-                Button({
-                label: gettext('delete'),
-                style: {
-                    fontSize: '12px',
-                    borderRadius: '30px',
-                    background: '#D85E33',
-                    color: 'white',
-                },
-                onClick: () => {
-                    this.deleteTodoList(index)
+                TextInput({
+                label: gettext('addTodo'),
+                onChange: (val) => {
+                    this.addTodoList(val)
                 },
                 }),
             ],
-            ),
         )
+        this.state.todoList.forEach((item, index) => {
+            contentItems.push(
+                View(
+                    {
+                        style: {
+                        borderBottom: '1px solid #eaeaea',
+                        padding: '6px 0',
+                        marginBottom: '6px',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        },
+                    },
+                    [
+                        View(
+                            {
+                                style: {
+                                flex: 1,
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justfyContent: 'center',
+                                alignItems: 'center',
+                                },
+                            },
+                            [
+                                TextInput({
+                                label: '',
+                                bold: true,
+                                value: item,
+                                subStyle: {
+                                    color: '#333',
+                                    fontSize: '14px',
+                                },
+                                maxLength: 200,
+                                onChange: (val) => {
+                                    if (val.length > 0 && val.length <= 200) {
+                                    this.editTodoList(val, index)
+                                    } else {
+                                    console.log("todoList can't be empty or too long!")
+                                    }
+                                },
+                                }),
+                            ],
+                        ),
+                        Button({
+                            label: gettext('delete'),
+                            style: {
+                                fontSize: '12px',
+                                borderRadius: '30px',
+                                background: '#D85E33',
+                                color: 'white',
+                            },
+                            onClick: () => {
+                                this.deleteTodoList(index)
+                            },
+                        }),
+                    ],
+                ),
+            )
         })
         return View(
         {
