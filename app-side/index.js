@@ -1,4 +1,4 @@
-import { ACCESS_TOKEN, PASSWORD, URL_SERVER, USERNAME } from '../config'
+import { URL_SERVER } from '../config'
 import { MessageBuilder } from '../shared/message-side'
 
 const messageBuilder = new MessageBuilder()
@@ -58,32 +58,32 @@ const fetchData = async (ctx) => {
 }
 
 const apiLogin = async (ctx) => {
-  try {
-    const data = await fetch({
-      url: URL_SERVER + '/api/login',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        userinfo_id: USERNAME,
-        password: PASSWORD,
-      })
-    })
+  // try {
+  //   const data = await fetch({
+  //     url: URL_SERVER + '/api/login',
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     },
+  //     body: JSON.stringify({
+  //       userinfo_id: USERNAME,
+  //       password: PASSWORD,
+  //     })
+  //   })
 
-    if (data.status == 200) {
-      const token = data.body.token
-      // Save token
-    }
+  //   if (data.status == 200) {
+  //     const token = data.body.token
+  //     // Save token
+  //   }
 
-    ctx.response({
-      data: { result: data },
-    })
-  } catch (error) {
-    ctx.response({
-      data: { result: 'ERROR' },
-    })
-  }
+  //   ctx.response({
+  //     data: { result: data },
+  //   })
+  // } catch (error) {
+  //   ctx.response({
+  //     data: { result: 'ERROR' },
+  //   })
+  // }
 }
 
 const apiPresensiList = async (ctx) => {
@@ -94,7 +94,7 @@ const apiPresensiList = async (ctx) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': "Bearer " + ACCESS_TOKEN,
+        'Authorization': "Bearer " + settings.settingsStorage.getItem('access_token'),
       }
     })
 
@@ -106,7 +106,7 @@ const apiPresensiList = async (ctx) => {
     if (data_json.status) {
       // Token failed
       ctx.response({
-        data: { result: 'TOKEN_FAILED' },
+        data: { result: 'TOKEN_FAILED', status: data_json.status},
       })
     } else {
       data_json.forEach(val => {

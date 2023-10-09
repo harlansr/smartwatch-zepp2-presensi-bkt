@@ -55,6 +55,9 @@
   "i18n": {
     "en-US": {
       "appName": "Presensi Bukittinggi"
+    },
+    "id-ID": {
+      "appName": "Presensi Bukittinggi"
     }
   },
   "defaultLanguage": "en-US"

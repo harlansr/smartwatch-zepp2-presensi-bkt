@@ -1,67 +1,84 @@
 import { gettext } from 'i18n'
+import { ACCESS_TOKEN, URL_SERVER } from '../config'
+// const { messageBuilder} = getApp()._options.globalData
 
 AppSettingsPage({
     state: {
         username: '',
         password: '',
-        access_token: '',
+        access_token: null,
+        name:'',
+        email:'',
         props: {},
     },
-    setState(props) {
-        this.state.props = props
-        this.state.access_token = 'TOKEN'
-        // this.state.access_token = props.settingsStorage.getItem('access_token')
-    },
+    
     handleLogout(){
-        // props.settingsStorage.setItem('access_token', null)
-        this.state.access_token = ''
+        this.state.props.settingsStorage.setItem('access_token', '')
     },
+    async getUserInfo(){
+        const data = await fetch(URL_SERVER + '/api/user',{
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer '+this.state.access_token
+            },
+        })
+        if(data.status == 200){
+            const response = await data.json()
+            if(response.status){
+                console.log('Response Error:',response.status)
+            }else{
+                this.state.name = response.name
+                this.state.email = response.email
+            }
+            return
+        }
+        this.handleLogout()
+    },
+    async setState(props) {
+        // const username = props.settingsStorage?.getItem('username')||''
+
+        this.state.props = props
+        this.state.username = props.settingsStorage?.getItem('username')||''
+        // this.state.name = 'Harlan Setia R'
+        // this.state.email = 'harlan@gmail.com'
+        this.state.access_token = props.settingsStorage?.getItem('access_token')||''
+        this.getUserInfo()
+    },
+    handleUsernameChange(val){
+        this.state.username = val
+    },
+    handlePasswordChange(val){
+        this.state.password = val
+    },
+    
+
+    async handleLogin(){
+        console.log("Login:", this.state.username)
+        // const data = await fetch(URL_SERVER + '/api/user');
+        const data = await fetch(URL_SERVER + '/api/login',{
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              userinfo_id: this.state.username,
+              password: this.state.password,
+            })
+        })
+        if(data.status == 200){
+            const response = await data.json()
+            // this.state.props.settingsStorage.setItem('username', response.data.token)
+            this.state.props.settingsStorage.setItem('access_token', response.token)
+            this.state.password = ''
+        }
+        console.log("Login Result", data.status)
+        // this.state.props.settingsStorage.setItem('access_token', data.body.token)
+    },
+    
     build(props) {
+        console.log("Open Setting")
         this.setState(props)
-        const btnUsername = View(
-            {
-                style: {
-                    fontSize: '12px',
-                    lineHeight: '30px',
-                    borderRadius: '30px',
-                    background: '#409EFF',
-                    color: 'white',
-                    textAlign: 'center',
-                    padding: '0 15px',
-                    width: '30%',
-                },
-            },
-            [
-                TextInput({
-                    label: 'Username',
-                    onChange: (val) => {
-                        // this.addTodoList(val)
-                    },
-                }),
-            ],
-        )
-        const btnPassword = View(
-            {
-                style: {
-                    fontSize: '12px',
-                    lineHeight: '30px',
-                    borderRadius: '30px',
-                    background: '#409EFF',
-                    color: 'white',
-                    textAlign: 'center',
-                    padding: '0 15px',
-                    width: '30%',
-                },
-            },
-            [
-                TextInput({
-                    label: 'Password',
-                    onChange: (val) => {
-                        // this.addTodoList(val)
-                    },
-                }),
-            ],
-        )
 
         const loginInfoText = Text({
             style:{
@@ -100,13 +117,13 @@ AppSettingsPage({
                     },
                     align: 'center',
                     bold:'true',
-                },'Harlan Setia Rahendra'),
+                },this.state.name),
                 Text({
                     style:{
 
                     },
                     align: 'center'
-                },'harlan.setia@gmail.com'),
+                },this.state.email),
                 Button({
                     label: 'Logout',
                     style: {
@@ -133,7 +150,94 @@ AppSettingsPage({
             ]
         )
 
-        const pageShow = (this.state.access_token)?viewProfile:loginInfoText
+        const viewLogin = View(
+            {
+                style: {
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                }
+            },[
+                loginInfoText,
+                View(
+                    {
+                        style:{
+                            background:'#808080',
+                            color: 'white',
+                            width:'240px',
+                            paddingTop: '5px',
+                            paddingBottom: '5px',
+                            paddingLeft: '10px',
+                            paddingRight: '10px',
+                            borderRadius: '5px',
+
+                            display: 'block',
+                            marginLeft: 'auto',
+                            marginRight: 'auto',
+
+                            marginTop: '20px',
+                            marginBottom: '6px',
+                        }
+                    },[
+                        TextInput({
+                            label: 'Username',
+                            placeholder: 'NIP/NIK',
+                            value:this.state.username,
+                            onChange: (val)=>this.handleUsernameChange(val)
+                        }),
+                    ]
+                ),
+                View(
+                    {
+                        style:{
+                            background:'#808080',
+                            color: 'white',
+                            width:'240px',
+                            paddingTop: '5px',
+                            paddingBottom: '5px',
+                            paddingLeft: '10px',
+                            paddingRight: '10px',
+                            borderRadius: '5px',
+
+                            display: 'block',
+                            marginLeft: 'auto',
+                            marginRight: 'auto',
+
+                            marginBottom: '8px',
+                        }
+                    },[
+                        TextInput({
+                            label: 'Password',
+                            placeholder: 'Password',
+                            onChange: (val)=>this.handlePasswordChange(val)
+                        }),
+                    ]
+                ),
+                Button({
+                    label: 'Login',
+                    style: {
+                        display: 'block',
+                        marginLeft: 'auto',
+                        marginRight: 'auto',
+
+                        fontSize: '12px',
+                        borderRadius: '8px',
+                        width:'150px',
+                        background: '#3944bc',
+                        // background:'#00000000',
+                        color: 'white',
+                        borderWidth: 'thin',
+                        borderColor: '#3944bc'
+                    },
+                    onClick: () => {
+                        this.handleLogin()
+                        // this.deleteTodoList(index)
+                    },
+                }),
+            ]
+        )
+
+        const pageShow = (this.state.access_token)?viewProfile:viewLogin
 
         return View(
             {
