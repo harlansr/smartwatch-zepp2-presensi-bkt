@@ -1,10 +1,10 @@
-import hmUI, { createWidget, widget, prop } from '@zos/ui'
+import hmUI, { createWidget, widget, prop, anim_status, deleteWidget } from '@zos/ui'
 import { log as Logger, px, settings } from '@zos/utils'
 import { gettext } from 'i18n'
 
 const logger = Logger.getLogger("fetch_api")
 const { messageBuilder, accessToken } = getApp()._options.globalData
-
+let dataPresensiList = {};
 
 const cardDay = (text, time_1, time_4, cor_y) => {
   var today = new Date();
@@ -52,8 +52,6 @@ const cardDay = (text, time_1, time_4, cor_y) => {
     radius: 10,
     color: 0xd13b30
   })
-
-
 
   let cor_card = cor_y + 50
 
@@ -104,6 +102,54 @@ const cardBox = (text, y = 150, today) => {
 
 }
 
+const imgLoading = createWidget(widget.IMG, {
+    x: 180,
+    y: 180,
+    w: px(120),
+    h: px(120),
+    center_x: 120,
+    center_y: 120,
+    auto_scale: true,
+    src: 'presensi-bkt-c.png'
+})
+
+const anim_step3 = {
+  anim_rate: 'bounce',
+  anim_duration: 1200,
+  anim_from: px(80),
+  anim_to: px(180),
+  anim_prop: prop.Y
+}
+const anim_step4 = {
+  anim_rate: 'linear',
+  anim_duration: 600,
+  anim_from: 0,
+  anim_to: 250,
+  anim_prop: prop.ALPHA
+}
+const animLoading = imgLoading.setProperty(prop.ANIM, {
+  anim_steps: [anim_step3, anim_step4],
+  anim_fps: 60,
+  anim_repeat: 10,
+})
+
+const fillData = ()=>{
+  const { body, status } = dataPresensiList
+  if (body) {
+    let index = 0
+    body.forEach(val => {
+      cardDay(val.tanggal, val.time_1, val.time_4, (240 * index) + 130)
+      index++
+    });
+  } else {
+    if (data.result == 'TOKEN_FAILED') {
+      createWidget(widget.TEXT, TEXT_ERROR_TOKEN)
+    } else {
+      createWidget(widget.TEXT, TEXT_ERROR)
+    }
+  }
+}
+
 Page({
   state: {},
   build() {
@@ -111,6 +157,12 @@ Page({
     createWidget(widget.TEXT, TEXT_TITLE_2)
     console.log("Run Build")
     this.fetchData()
+
+    // imgLoading
+    // imgLoading.setProperty(prop.ANIM_STATUS, {
+    //   anim_id: animId,
+    //   anim_status: anim_status.RESUME
+    // })
   },
 
 
@@ -120,23 +172,12 @@ Page({
     })
       .then(data => {
         const { result = {} } = data
-        const { body, status } = result
-
-        if (body) {
-          let index = 0
-          body.forEach(val => {
-            cardDay(val.tanggal, val.time_1, val.time_4, (240 * index) + 130)
-            index++
-          });
-        } else {
-          if (data.result == 'TOKEN_FAILED') {
-            createWidget(widget.TEXT, TEXT_ERROR_TOKEN)
-          } else {
-            createWidget(widget.TEXT, TEXT_ERROR)
-          }
-        }
-
+        dataPresensiList = result
+        deleteWidget(imgLoading)
+        fillData()
+        console.log(" --- API Response Success ---")
       }).catch(res => {
+        deleteWidget(imgLoading)
         console.log(" --- API Response ERROR ---")
       })
   },
@@ -179,7 +220,8 @@ const TEXT_ERROR = {
   text_style: hmUI.text_style.WRAP
 }
 const TEXT_ERROR_TOKEN = {
-  text: "TOKEN AKSES\nBERMASALAH",
+  // text: "TOKEN AKSES\nBERMASALAH",
+  text: "BELUM LOGIN\nBUKA SETTING HP",
   x: px(80),
   y: px(180),
   w: px(300),

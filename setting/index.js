@@ -9,11 +9,14 @@ AppSettingsPage({
         access_token: null,
         name:'',
         email:'',
+        photo:'http://devpresensi.bukittinggikota.go.id/logo/avatar-male.jpg',
         props: {},
     },
     
     handleLogout(){
         this.state.props.settingsStorage.setItem('access_token', '')
+        this.state.name = ''
+        this.state.email = ''
     },
     async getUserInfo(){
         const data = await fetch(URL_SERVER + '/api/user',{
@@ -29,7 +32,9 @@ AppSettingsPage({
                 console.log('Response Error:',response.status)
             }else{
                 this.state.name = response.name
-                this.state.email = response.email
+                this.state.email = response.userinfo_id
+                this.state.photo = (response.photo)?'http://devpresensi.bukittinggikota.go.id/storage/foto-profil/'+response.photo:'http://devpresensi.bukittinggikota.go.id/logo/avatar-male.jpg'
+                this.state.props.settingsStorage.setItem('username',response.userinfo_id)
             }
             return
         }
@@ -43,10 +48,13 @@ AppSettingsPage({
         // this.state.name = 'Harlan Setia R'
         // this.state.email = 'harlan@gmail.com'
         this.state.access_token = props.settingsStorage?.getItem('access_token')||''
-        this.getUserInfo()
+        if(this.state.access_token && !this.state.name){
+            this.getUserInfo()
+        }
     },
     handleUsernameChange(val){
         this.state.username = val
+        this.state.props.settingsStorage.setItem('username',val)
     },
     handlePasswordChange(val){
         this.state.password = val
@@ -104,12 +112,13 @@ AppSettingsPage({
                         marginLeft: 'auto',
                         marginRight: 'auto',
 
-                        height: 'auto',
+                        height: '100px',
                         width: '100px',
+                        objectFit: 'cover',
                         borderRadius: '50%',
                         marginBottom:'15px',
                     },
-                    src: 'http://devpresensi.bukittinggikota.go.id/storage/foto-profil/1375030604950001_profil_.gif'
+                    src: this.state.photo
                 }),
                 Text({
                     style:{
