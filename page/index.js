@@ -6,6 +6,13 @@ const logger = Logger.getLogger("fetch_api")
 const { messageBuilder, accessToken } = getApp()._options.globalData
 let dataPresensiList = {};
 
+const groupList = createWidget(widget.GROUP, {
+  x:0,
+  y:0,
+  w:0,
+  h:0,
+})
+
 const cardDay = (text, time_1, time_4, cor_y) => {
   var today = new Date();
   var dd = String(today.getDate()).padStart(2, '0');
@@ -21,7 +28,7 @@ const cardDay = (text, time_1, time_4, cor_y) => {
   var yyyy_f = matchDay.getFullYear();
   let text_date = `${dd_f}-${mm_f}-${yyyy_f}`
 
-  createWidget(widget.TEXT, {
+  groupList.createWidget(widget.TEXT, {
     text: text_date,
     x: 70,
     y: cor_y,
@@ -34,7 +41,7 @@ const cardDay = (text, time_1, time_4, cor_y) => {
   })
 
   // Garis Lurus
-  createWidget(widget.FILL_RECT, {
+  groupList.createWidget(widget.FILL_RECT, {
     x: 38,
     y: cor_y + 15,
     w: 5,
@@ -44,7 +51,7 @@ const cardDay = (text, time_1, time_4, cor_y) => {
   })
 
   // Titik
-  createWidget(widget.FILL_RECT, {
+  groupList.createWidget(widget.FILL_RECT, {
     x: 30,
     y: cor_y + 15,
     w: 20,
@@ -65,7 +72,7 @@ const cardBox = (text, y = 150, today) => {
   if (today) {
     color = 0x282e38
   }
-  createWidget(widget.FILL_RECT, {
+  groupList.createWidget(widget.FILL_RECT, {
     x: 60,
     y: y,
     w: 370,
@@ -75,7 +82,7 @@ const cardBox = (text, y = 150, today) => {
   })
 
   if (today && text == "PULANG - ") {
-    createWidget(widget.TEXT, {
+    groupList.createWidget(widget.TEXT, {
       text: "< BELUM PULANG >",
       x: 48,
       y: y + 17,
@@ -87,7 +94,7 @@ const cardBox = (text, y = 150, today) => {
       text_style: hmUI.text_style.WRAP
     })
   } else {
-    createWidget(widget.TEXT, {
+    groupList.createWidget(widget.TEXT, {
       text: text,
       x: 85,
       y: y + 17,
@@ -115,8 +122,8 @@ const imgLoading = createWidget(widget.IMG, {
 
 const anim_step3 = {
   anim_rate: 'bounce',
-  anim_duration: 1200,
-  anim_from: px(80),
+  anim_duration: 1000,
+  anim_from: px(0),
   anim_to: px(180),
   anim_prop: prop.Y
 }
@@ -134,12 +141,34 @@ const animLoading = imgLoading.setProperty(prop.ANIM, {
 })
 
 const fillData = ()=>{
+  const anim_data = {
+    anim_rate: 'linear',
+    anim_duration: 600,
+    anim_from: px(400),
+    anim_to: px(0),
+    anim_prop: prop.Y
+  }
+  const anim_data_2 = {
+    anim_rate: 'linear',
+    anim_duration: 600,
+    anim_from: 0,
+    anim_to: 250,
+    anim_prop: prop.ALPHA
+  }
+  const animGroupList = groupList.setProperty(prop.ANIM, {
+    anim_steps: [anim_data, anim_data_2],
+    anim_fps: 30,
+    anim_repeat: 1,
+  })
+
   const { body, status } = dataPresensiList
   if (body) {
     let index = 0
     body.forEach(val => {
-      cardDay(val.tanggal, val.time_1, val.time_4, (240 * index) + 130)
-      index++
+      if(index<7){
+        cardDay(val.tanggal, val.time_1, val.time_4, (240 * index) + 130)
+        index++
+      }
     });
   } else {
     if (data.result == 'TOKEN_FAILED') {

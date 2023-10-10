@@ -99,7 +99,6 @@ const apiPresensiList = async (ctx) => {
     })
 
     const data_json = data.body
-    // const data_json = JSON.parse(data.body)
     let i = 0
     let data_send = []
 
@@ -146,8 +145,6 @@ const apiPresensiList = async (ctx) => {
         },
       })
     }
-
-
   } catch (error) {
     ctx.response({
       data: { result: 'ERROR' },
